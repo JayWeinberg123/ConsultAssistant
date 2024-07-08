@@ -1,0 +1,28 @@
+﻿@page "/upload"
+@using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient Http
+
+<h3>Upload de Arquivos</h3>
+
+<InputFile OnChange="HandleFileSelected" />
+
+@code {
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize: 10485760)); // 10 MB
+        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+        content.Add(fileContent, "file", file.Name);
+
+        var response = await Http.PostAsync("/api/upload", content);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Upload successful");
+        }
+        else
+        {
+            Console.WriteLine("Upload failed");
+        }
+    }
+}

@@ -1,0 +1,37 @@
+﻿@page "/files"
+@using ConsultAssistant.Models
+@inject HttpClient Http
+
+<h3>Uploaded Files</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Content Type</th>
+            <th>Uploaded At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (files != null)
+        {
+            foreach (var file in files)
+            {
+                <tr>
+                    <td>@file.FileName</td>
+                    <td>@file.ContentType</td>
+                    <td>@file.UploadedAt</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<UploadedFile> files;
+
+    protected override async Task OnInitializedAsync()
+    {
+        files = await Http.GetFromJsonAsync<List<UploadedFile>>("/api/upload");
+    }
+}
